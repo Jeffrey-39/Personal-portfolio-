@@ -1,0 +1,501 @@
+import { useState, useEffect, useRef } from "react";
+
+const C = {
+  bg: "#04080F",
+  surface: "#0A1628",
+  surfaceLight: "#0F1E35",
+  accent: "#00C8FF",
+  purple: "#8B5CF6",
+  green: "#00E5A0",
+  orange: "#F97316",
+  text: "#E2EDF7",
+  muted: "#5A7A8A",
+  border: "#1A2E45",
+};
+
+const navLinks = ["About", "Experience", "Skills", "Projects", "Contact"];
+
+const experience = [
+  {
+    role: "ICT Intern – Security & Network Infrastructure",
+    company: "Informed Systems Limited",
+    period: "May – Aug 2025",
+    location: "Nairobi, Kenya",
+    color: C.accent,
+    bullets: [
+      "Installed Cat6 structured cabling and fibre patch panels at new build sites including Ruai residence and St. Patrick's Missionary Society.",
+      "Configured CCTV cameras (dome, bullet, PTZ), a 16-port SFP network switch, PoE injectors, and a 4U network cabinet.",
+      "Performed scheduled maintenance on fire alarm control panels at the British High Commission — tested circuits and issued fault reports.",
+      "Diagnosed NVR faults and replaced failed hard drives at KEBS to fully restore recording continuity.",
+      "Managed the Informed Store WordPress/WooCommerce site using Elementor; executed Google Ads campaigns tracked via Google Analytics.",
+      "Implemented on-page SEO — keyword research, meta-tag optimisation, and internal linking to boost organic search rankings.",
+      "Prepared tender documents including work methodology, risk analysis, and ARIBA procurement portal submissions.",
+    ],
+  },
+  {
+    role: "Sales & Digital Marketing Specialist",
+    company: "Informed Systems Limited",
+    period: "Prior to Internship",
+    location: "Nairobi, Kenya",
+    color: C.purple,
+    bullets: [
+      "Conducted site surveys and designed customised security packages (CCTV, fire suppression, electric fencing) for commercial and residential clients.",
+      "Developed and managed Google Ads Search and Display campaigns; used Google Analytics to track lead acquisition and optimise ad spend.",
+      "Maintained thorough knowledge of product features, competitive pricing, and safety compliance requirements to guide consultative sales.",
+    ],
+  },
+];
+
+const skillGroups = [
+  { cat: "Network & Infrastructure", icon: "🌐", color: C.accent, items: ["Cat6 Structured Cabling", "Fibre Optics", "PoE", "SFP Switches", "TPLink Omada", "Mercusys", "Network Cabinets"] },
+  { cat: "Security Systems", icon: "🔒", color: C.purple, items: ["CCTV (Dome/Bullet/PTZ)", "NVR / DVR", "Fire Alarm Systems", "Public Address Systems", "Video Intercoms", "Kathexis Vision"] },
+  { cat: "Digital Marketing", icon: "📈", color: C.green, items: ["Google Ads (Search/Display)", "Google Analytics", "SEO & Metatag Optimisation", "Content Marketing"] },
+  { cat: "Web & Design", icon: "💻", color: C.orange, items: ["WordPress", "Elementor", "WooCommerce", "Canva", "Adobe", "Blog Publishing", "Cache Optimisation"] },
+  { cat: "Business & Operations", icon: "📋", color: C.accent, items: ["Tender Document Preparation", "ARIBA Procurement Portal", "Risk Analysis", "ICT Project Delivery", "Data Processor Licensing"] },
+  { cat: "Soft Skills", icon: "🤝", color: C.purple, items: ["Teamwork", "Communication", "Leadership", "Time Management", "Innovation", "Mentoring"] },
+];
+
+const projects = [
+  { title: "Multi-Site CCTV & Network Deployment", description: "End-to-end installation of Cat6 structured cabling, CCTV cameras, SFP switches, PoE injectors, and a 4U network cabinet across two new-build sites — Ruai residence and St. Patrick's Missionary Society. Interpreted architectural drawings for optimal cable routing.", tags: ["Cat6 Cabling", "CCTV", "SFP Switch", "PoE", "Network Cabinet"], color: C.accent, icon: "🌐", type: "Infrastructure" },
+  { title: "British High Commission Fire Alarm Maintenance", description: "Scheduled maintenance of fire alarm control panels — cleaned smoke detectors, tested all circuits, diagnosed faults, and issued detailed fault reports ensuring full safety compliance at a high-profile diplomatic site.", tags: ["Fire Alarm Systems", "Preventive Maintenance", "Fault Reporting", "Safety Compliance"], color: C.purple, icon: "🔥", type: "Security Systems" },
+  { title: "KEBS Surveillance System Restoration", description: "Diagnosed and resolved surveillance failures at Kenya Bureau of Standards — corrected camera misalignment, diagnosed NVR faults, and replaced failed hard drives to fully restore CCTV recording continuity.", tags: ["NVR Diagnostics", "CCTV", "Kathexis Vision", "Hardware Repair"], color: C.green, icon: "📷", type: "Security Systems" },
+  { title: "Informed Store E-Commerce Platform", description: "Managed a live WordPress/WooCommerce e-commerce site — added product listings, customised pages with Elementor, authored SEO blog posts ('DVR vs. NVR', 'PoE Extenders'), and designed promotional graphics using Canva and Adobe.", tags: ["WordPress", "WooCommerce", "Elementor", "SEO", "Canva", "Content Marketing"], color: C.orange, icon: "🛒", type: "Web & Marketing" },
+  { title: "Google Ads Campaign Management", description: "Planned, launched, and optimised Google Ads Search and Display campaigns for Informed Systems. Tracked KPIs daily via Google Analytics — monitoring traffic sources, bounce rate, and conversion funnels to maximise ROI and lead acquisition.", tags: ["Google Ads", "Google Analytics", "Conversion Optimisation", "Lead Generation"], color: C.accent, icon: "📊", type: "Digital Marketing" },
+];
+
+// ── Reusable components ───────────────────────────────────────────────────────
+
+function Navbar({ active }) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+
+  return (
+    <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "0 2.5rem", height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between", background: scrolled ? "rgba(4,8,15,0.94)" : "transparent", backdropFilter: scrolled ? "blur(18px)" : "none", borderBottom: scrolled ? `1px solid ${C.border}` : "none", transition: "all 0.35s ease" }}>
+      <span style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: "1.1rem", color: C.accent, letterSpacing: "0.04em" }}>JGI<span style={{ color: C.text }}>.</span></span>
+      <div style={{ display: "flex", gap: "1.8rem", alignItems: "center" }}>
+        {navLinks.map(n => (
+          <a key={n} href={`#${n.toLowerCase()}`} style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.72rem", color: active === n.toLowerCase() ? C.accent : C.muted, textDecoration: "none", letterSpacing: "0.08em", textTransform: "uppercase", transition: "color 0.2s" }}
+            onMouseEnter={e => e.target.style.color = C.accent}
+            onMouseLeave={e => e.target.style.color = active === n.toLowerCase() ? C.accent : C.muted}>{n}</a>
+        ))}
+        <a href="#contact" style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.72rem", padding: "0.38rem 0.9rem", borderRadius: "5px", background: C.accent, color: C.bg, textDecoration: "none", letterSpacing: "0.06em", fontWeight: 600, transition: "opacity 0.2s" }}
+          onMouseEnter={e => e.target.style.opacity = "0.82"}
+          onMouseLeave={e => e.target.style.opacity = "1"}>↓ CV</a>
+      </div>
+    </nav>
+  );
+}
+
+function TypingText({ text, speed = 50 }) {
+  const [displayed, setDisplayed] = useState("");
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    if (idx < text.length) {
+      const t = setTimeout(() => { setDisplayed(p => p + text[idx]); setIdx(i => i + 1); }, speed);
+      return () => clearTimeout(t);
+    }
+  }, [idx, text, speed]);
+  return <span>{displayed}<span style={{ display: "inline-block", width: "2px", height: "1em", background: C.accent, marginLeft: "2px", verticalAlign: "text-bottom", animation: "blink 1s step-end infinite" }} /></span>;
+}
+
+function FadeUp({ children, delay = 0, style = {} }) {
+  const [vis, setVis] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setTimeout(() => setVis(true), delay); }, { threshold: 0.12 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [delay]);
+  return <div ref={ref} style={{ opacity: vis ? 1 : 0, transform: vis ? "translateY(0)" : "translateY(26px)", transition: "all 0.7s cubic-bezier(.4,0,.2,1)", ...style }}>{children}</div>;
+}
+
+function SectionHeader({ num, label, title }) {
+  return (
+    <div style={{ marginBottom: "3rem" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", marginBottom: "0.6rem" }}>
+        <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.68rem", color: C.accent, letterSpacing: "0.2em", textTransform: "uppercase" }}>// {num}. {label}</span>
+        <div style={{ flex: 1, height: "1px", background: C.border }} />
+      </div>
+      <h2 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: "clamp(2rem,4.5vw,3rem)", color: C.text, margin: 0, lineHeight: 1.1 }}>{title}</h2>
+    </div>
+  );
+}
+
+function ProjectCard({ project, delay }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <FadeUp delay={delay}>
+      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{ background: hov ? C.surfaceLight : C.surface, border: `1px solid ${hov ? project.color + "55" : C.border}`, borderRadius: "14px", padding: "1.6rem", transition: "all 0.3s ease", boxShadow: hov ? `0 4px 32px ${project.color}1A` : "none", height: "100%", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(90deg, transparent, ${project.color}, transparent)`, opacity: hov ? 1 : 0, transition: "opacity 0.3s" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.8rem" }}>
+          <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+            <span style={{ fontSize: "1.4rem" }}>{project.icon}</span>
+            <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: "0.98rem", color: C.text, margin: 0 }}>{project.title}</h3>
+          </div>
+          <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.6rem", padding: "0.15rem 0.55rem", borderRadius: "20px", background: project.color + "22", color: project.color, border: `1px solid ${project.color}44`, whiteSpace: "nowrap", marginLeft: "0.5rem", flexShrink: 0 }}>{project.type}</span>
+        </div>
+        <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: "0.86rem", color: C.muted, lineHeight: 1.75, margin: "0 0 1rem" }}>{project.description}</p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+          {project.tags.map(t => <span key={t} style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.63rem", padding: "0.15rem 0.5rem", borderRadius: "4px", background: C.bg, color: project.color, border: `1px solid ${project.color}33` }}>{t}</span>)}
+        </div>
+      </div>
+    </FadeUp>
+  );
+}
+
+// ── Contact Form ─────────────────────────────────────────────────────────────
+
+function ContactForm() {
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [focused, setFocused] = useState(null);
+
+  const inputStyle = (field) => ({
+    width: "100%",
+    background: C.bg,
+    border: `1px solid ${focused === field ? C.accent : C.border}`,
+    borderRadius: "8px",
+    padding: "0.75rem 1rem",
+    fontFamily: "'Nunito',sans-serif",
+    fontSize: "0.9rem",
+    color: C.text,
+    outline: "none",
+    transition: "border-color 0.2s, box-shadow 0.2s",
+    boxShadow: focused === field ? `0 0 0 3px ${C.accent}18` : "none",
+    resize: "none",
+  });
+
+  const labelStyle = {
+    fontFamily: "'IBM Plex Mono',monospace",
+    fontSize: "0.62rem",
+    color: C.muted,
+    textTransform: "uppercase",
+    letterSpacing: "0.12em",
+    display: "block",
+    marginBottom: "0.4rem",
+  };
+
+  const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleSubmit = () => {
+    if (!form.name || !form.email || !form.message) {
+      setStatus("error");
+      return;
+    }
+    const mailto = `mailto:jeffreyirungu39@gmail.com?subject=${encodeURIComponent(form.subject || `Portfolio contact from ${form.name}`)}&body=${encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`)}`;
+    window.location.href = mailto;
+    setStatus("sent");
+    setTimeout(() => {
+      setForm({ name: "", email: "", subject: "", message: "" });
+      setStatus("idle");
+    }, 4000);
+  };
+
+  if (status === "sent") {
+    return (
+      <div style={{ background: C.surface, border: `1px solid ${C.green}55`, borderRadius: "14px", padding: "2.5rem", textAlign: "center" }}>
+        <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>✅</div>
+        <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: "1.2rem", color: C.green, marginBottom: "0.6rem" }}>Message Ready!</h3>
+        <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: "0.9rem", color: C.muted, lineHeight: 1.7 }}>Your mail client has opened with your message pre-filled. Just hit send!</p>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: "14px", padding: "2rem", position: "relative", overflow: "hidden" }}>
+      {/* top accent line */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(90deg, transparent, ${C.accent}, transparent)` }} />
+
+      <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: "1.05rem", color: C.text, marginBottom: "1.5rem" }}>Send me a message</h3>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+        <div>
+          <label style={labelStyle}>Your Name *</label>
+          <input name="name" value={form.name} onChange={handleChange}
+            onFocus={() => setFocused("name")} onBlur={() => setFocused(null)}
+            placeholder="Jane Doe" style={inputStyle("name")} />
+        </div>
+        <div>
+          <label style={labelStyle}>Your Email *</label>
+          <input name="email" type="email" value={form.email} onChange={handleChange}
+            onFocus={() => setFocused("email")} onBlur={() => setFocused(null)}
+            placeholder="jane@example.com" style={inputStyle("email")} />
+        </div>
+      </div>
+
+      <div style={{ marginBottom: "1rem" }}>
+        <label style={labelStyle}>Subject</label>
+        <input name="subject" value={form.subject} onChange={handleChange}
+          onFocus={() => setFocused("subject")} onBlur={() => setFocused(null)}
+          placeholder="Internship opportunity / Let's collaborate…" style={inputStyle("subject")} />
+      </div>
+
+      <div style={{ marginBottom: "1.4rem" }}>
+        <label style={labelStyle}>Message *</label>
+        <textarea name="message" value={form.message} onChange={handleChange}
+          onFocus={() => setFocused("message")} onBlur={() => setFocused(null)}
+          placeholder="Hi Jeffrey, I'd love to chat about…" rows={5} style={inputStyle("message")} />
+      </div>
+
+      {status === "error" && (
+        <p style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.72rem", color: "#f87171", marginBottom: "1rem" }}>
+          ⚠ Please fill in your name, email, and message.
+        </p>
+      )}
+
+      <button onClick={handleSubmit} style={{ width: "100%", padding: "0.88rem", background: C.accent, color: C.bg, border: "none", borderRadius: "8px", fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.84rem", fontWeight: 600, letterSpacing: "0.06em", cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
+        onMouseEnter={e => { e.target.style.transform = "translateY(-1px)"; e.target.style.boxShadow = `0 6px 20px ${C.accent}44`; }}
+        onMouseLeave={e => { e.target.style.transform = "none"; e.target.style.boxShadow = "none"; }}>
+        ✉ Send Message
+      </button>
+    </div>
+  );
+}
+
+// ── Main ─────────────────────────────────────────────────────────────────────
+
+export default function Portfolio() {
+  const [active, setActive] = useState("about");
+
+  useEffect(() => {
+    const ids = ["about", "experience", "skills", "projects", "contact"];
+    const observers = ids.map(id => {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      const o = new IntersectionObserver(([e]) => { if (e.isIntersecting) setActive(id); }, { threshold: 0.35 });
+      o.observe(el);
+      return o;
+    });
+    return () => observers.forEach(o => o && o.disconnect());
+  }, []);
+
+  const Btn = ({ href, primary, children, download }) => {
+    const [hov, setHov] = useState(false);
+    return (
+      <a href={href} download={download} target={href && href.startsWith("http") ? "_blank" : undefined} rel="noreferrer"
+        onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+        style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.82rem", padding: "0.88rem 1.9rem", borderRadius: "6px", textDecoration: "none", letterSpacing: "0.05em", fontWeight: primary ? 600 : 400, transition: "all 0.2s", background: primary ? C.accent : "transparent", color: primary ? C.bg : hov ? C.accent : C.text, border: primary ? "none" : `1px solid ${hov ? C.accent : C.border}`, transform: hov && primary ? "translateY(-2px)" : "none", boxShadow: hov && primary ? `0 8px 24px ${C.accent}44` : "none" }}>
+        {children}
+      </a>
+    );
+  };
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0}
+        html{scroll-behavior:smooth}
+        body{background:${C.bg}}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+        ::-webkit-scrollbar{width:4px}
+        ::-webkit-scrollbar-track{background:${C.bg}}
+        ::-webkit-scrollbar-thumb{background:${C.border};border-radius:4px}
+      `}</style>
+
+      <div style={{ background: C.bg, color: C.text, minHeight: "100vh" }}>
+
+        {/* BG decoration */}
+        <div style={{ position: "fixed", inset: 0, pointerEvents: "none", backgroundImage: `linear-gradient(${C.border} 1px,transparent 1px),linear-gradient(90deg,${C.border} 1px,transparent 1px)`, backgroundSize: "60px 60px", opacity: 0.12 }} />
+        <div style={{ position: "fixed", top: "8%", right: "12%", width: "500px", height: "500px", borderRadius: "50%", background: `radial-gradient(circle,${C.accent}12 0%,transparent 70%)`, pointerEvents: "none" }} />
+        <div style={{ position: "fixed", bottom: "15%", left: "8%", width: "380px", height: "380px", borderRadius: "50%", background: `radial-gradient(circle,${C.purple}12 0%,transparent 70%)`, pointerEvents: "none" }} />
+
+        <Navbar active={active} />
+
+        {/* ── HERO ── */}
+        <section style={{ minHeight: "100vh", display: "flex", alignItems: "center", padding: "0 2.5rem", maxWidth: "1040px", margin: "0 auto" }}>
+          <div>
+            <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.78rem", color: C.accent, letterSpacing: "0.22em", marginBottom: "1.2rem", animation: "fadeUp 0.8s ease both", display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              <span style={{ display: "inline-block", width: "32px", height: "1px", background: C.accent }} /> NAIROBI, KENYA
+            </div>
+            <h1 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: "clamp(2.8rem,7.5vw,5.8rem)", lineHeight: 1.04, marginBottom: "0.9rem", animation: "fadeUp 0.8s 0.1s ease both" }}>
+              Jeffrey<br /><span style={{ color: C.accent }}>Gitau</span> Irungu
+            </h1>
+            <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "clamp(0.9rem,2vw,1.15rem)", color: C.muted, marginBottom: "1.8rem", animation: "fadeUp 0.8s 0.2s ease both", minHeight: "2rem" }}>
+              <TypingText text="Network & Security Infrastructure · Digital Marketing" speed={48} />
+            </div>
+            <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: "1.05rem", color: C.muted, lineHeight: 1.85, maxWidth: "600px", marginBottom: "2.5rem", animation: "fadeUp 0.8s 0.3s ease both" }}>
+              Final-year <strong style={{ color: C.text }}>BSc Information Technology</strong> student at Pioneer International University — with real-world hands-on experience in CCTV installation, structured cabling, fire alarm systems, Google Ads, and e-commerce management.
+            </p>
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", animation: "fadeUp 0.8s 0.4s ease both" }}>
+              <Btn href="#projects" primary>View Projects</Btn>
+              <Btn href="#contact">↓ Download CV</Btn>
+              <Btn href="#contact">Get in Touch</Btn>
+            </div>
+          </div>
+        </section>
+
+        {/* ── ABOUT ── */}
+        <section id="about" style={{ minHeight: "100vh", padding: "7rem 2.5rem 5rem", maxWidth: "1040px", margin: "0 auto" }}>
+          <SectionHeader num="01" label="about" title="Who I Am" />
+          <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "3.5rem", alignItems: "start" }}>
+            <FadeUp>
+              <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: "1.02rem", color: C.muted, lineHeight: 1.87, marginBottom: "1.2rem" }}>
+                I'm <strong style={{ color: C.text }}>Jeffrey Gitau Irungu</strong> — a final-year <strong style={{ color: C.accent }}>BSc Information Technology</strong> student at Pioneer International University, combining real-world technical depth with consultative business acumen.
+              </p>
+              <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: "1.02rem", color: C.muted, lineHeight: 1.87, marginBottom: "1.2rem" }}>
+                Through my internship at <strong style={{ color: C.text }}>Informed Systems Limited</strong>, I've delivered end-to-end ICT projects — from reading architectural drawings and routing Cat6 cabling, to configuring NVRs, maintaining fire alarm control panels at the British High Commission, and launching performance-driven Google Ads campaigns.
+              </p>
+              <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: "1.02rem", color: C.muted, lineHeight: 1.87 }}>
+                I'm seeking roles where I can apply my cross-disciplinary skills across network infrastructure, physical security, and digital marketing — and keep growing in hands-on, client-facing environments.
+              </p>
+            </FadeUp>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              {[
+                { label: "University", value: "Pioneer International University", icon: "🎓" },
+                { label: "Degree", value: "BSc IT (Final Year)", icon: "📚" },
+                { label: "Location", value: "Nairobi, Kenya", icon: "📍" },
+                { label: "Languages", value: "English · Kiswahili", icon: "🌍" },
+                { label: "Phone", value: "+254 114 014 322", icon: "📞" },
+                { label: "Status", value: "Open to Work ✅", icon: "🟢" },
+              ].map((item, i) => (
+                <FadeUp key={item.label} delay={i * 80}>
+                  <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: "12px", padding: "1.1rem" }}>
+                    <div style={{ fontSize: "1.25rem", marginBottom: "0.4rem" }}>{item.icon}</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.6rem", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.25rem" }}>{item.label}</div>
+                    <div style={{ fontFamily: "'Nunito',sans-serif", fontSize: "0.82rem", color: C.text, fontWeight: 600 }}>{item.value}</div>
+                  </div>
+                </FadeUp>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── EXPERIENCE ── */}
+        <section id="experience" style={{ minHeight: "100vh", padding: "7rem 2.5rem 5rem", maxWidth: "1040px", margin: "0 auto" }}>
+          <SectionHeader num="02" label="experience" title="Work Experience" />
+          <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            {experience.map((exp, i) => (
+              <FadeUp key={exp.role} delay={i * 150}>
+                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderLeft: `3px solid ${exp.color}`, borderRadius: "14px", padding: "2rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.3rem" }}>
+                    <div>
+                      <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: "1.1rem", color: C.text, marginBottom: "0.3rem" }}>{exp.role}</h3>
+                      <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.78rem", color: exp.color }}>{exp.company}</span>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.72rem", color: C.muted, marginBottom: "0.2rem" }}>{exp.period}</div>
+                      <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.68rem", color: C.muted }}>{exp.location}</div>
+                    </div>
+                  </div>
+                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                    {exp.bullets.map((b, j) => (
+                      <li key={j} style={{ display: "flex", gap: "0.7rem", alignItems: "flex-start" }}>
+                        <span style={{ color: exp.color, marginTop: "0.4rem", fontSize: "0.5rem", flexShrink: 0 }}>◆</span>
+                        <span style={{ fontFamily: "'Nunito',sans-serif", fontSize: "0.9rem", color: C.muted, lineHeight: 1.72 }}>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </section>
+
+        {/* ── SKILLS ── */}
+        <section id="skills" style={{ minHeight: "100vh", padding: "7rem 2.5rem 5rem", maxWidth: "1040px", margin: "0 auto" }}>
+          <SectionHeader num="03" label="skills" title="What I Work With" />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1.2rem" }}>
+            {skillGroups.map((g, i) => (
+              <FadeUp key={g.cat} delay={i * 100}>
+                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: "12px", padding: "1.3rem", height: "100%" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.8rem" }}>
+                    <span style={{ fontSize: "1.15rem" }}>{g.icon}</span>
+                    <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.63rem", color: g.color, textTransform: "uppercase", letterSpacing: "0.12em" }}>{g.cat}</span>
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.38rem" }}>
+                    {g.items.map(item => <span key={item} style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.65rem", padding: "0.18rem 0.52rem", borderRadius: "4px", background: C.bg, color: C.text, border: `1px solid ${C.border}` }}>{item}</span>)}
+                  </div>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+          <FadeUp delay={650} style={{ marginTop: "1.4rem" }}>
+            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: "12px", padding: "1.3rem" }}>
+              <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.63rem", color: C.orange, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "0.8rem" }}>🛠 Tools & Platforms</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
+                {["Google Ads Manager", "Google Analytics", "WordPress", "Canva", "Adobe", "ARIBA", "MS Office", "Elementor", "WooCommerce"].map(t => <span key={t} style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.66rem", padding: "0.2rem 0.6rem", borderRadius: "4px", background: C.bg, color: C.orange, border: `1px solid ${C.orange}33` }}>{t}</span>)}
+              </div>
+            </div>
+          </FadeUp>
+        </section>
+
+        {/* ── PROJECTS ── */}
+        <section id="projects" style={{ minHeight: "100vh", padding: "7rem 2.5rem 5rem", maxWidth: "1040px", margin: "0 auto" }}>
+          <SectionHeader num="04" label="projects" title="Things I've Delivered" />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.4rem" }}>
+            {projects.map((p, i) => <ProjectCard key={p.title} project={p} delay={i * 100} />)}
+          </div>
+        </section>
+
+        {/* ── CONTACT ── */}
+        <section id="contact" style={{ minHeight: "100vh", padding: "7rem 2.5rem 5rem", maxWidth: "1040px", margin: "0 auto" }}>
+          <SectionHeader num="05" label="contact" title="Let's Connect" />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3.5rem", alignItems: "start" }}>
+
+            {/* ── LEFT: Form ── */}
+            <FadeUp>
+              <ContactForm />
+            </FadeUp>
+
+            {/* ── RIGHT: Info ── */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+              <FadeUp>
+                <p style={{ fontFamily: "'Nunito',sans-serif", fontSize: "0.98rem", color: C.muted, lineHeight: 1.82, marginBottom: "0.5rem" }}>
+                  I'm actively looking for internship and graduate-level roles in network infrastructure, physical security, and digital marketing. Fill in the form or reach out directly — I'd love to hear from you!
+                </p>
+              </FadeUp>
+
+              {/* Clickable email highlight */}
+              <FadeUp delay={80}>
+                <a href="mailto:jeffreyirungu39@gmail.com" style={{ display: "flex", alignItems: "center", gap: "0.9rem", background: `linear-gradient(135deg, ${C.accent}18, ${C.accent}08)`, border: `1px solid ${C.accent}55`, borderRadius: "12px", padding: "1.1rem 1.3rem", textDecoration: "none", transition: "all 0.25s", marginBottom: "0.2rem" }}
+                  onMouseEnter={e => { e.currentTarget.style.background = `linear-gradient(135deg, ${C.accent}30, ${C.accent}12)`; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 28px ${C.accent}22`; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = `linear-gradient(135deg, ${C.accent}18, ${C.accent}08)`; e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
+                  <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: C.accent + "22", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", flexShrink: 0 }}>✉️</div>
+                  <div>
+                    <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.6rem", color: C.accent, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "0.2rem" }}>Click to Email Me</div>
+                    <div style={{ fontFamily: "'Nunito',sans-serif", fontSize: "0.95rem", color: C.accent, fontWeight: 700 }}>jeffreyirungu39@gmail.com</div>
+                  </div>
+                  <span style={{ marginLeft: "auto", color: C.accent, fontSize: "1rem" }}>↗</span>
+                </a>
+              </FadeUp>
+
+              {/* Other links */}
+              {[
+                { label: "Phone", value: "+254 114 014 322", href: "tel:+254114014322", icon: "📞", color: C.green },
+                { label: "GitHub", value: "github.com/Jeffrey-39", href: "https://github.com/Jeffrey-39", icon: "🐙", color: C.purple },
+                { label: "LinkedIn", value: "Jeffrey Irungu", href: "https://www.linkedin.com/in/jeffrey-irungu-4b2027262", icon: "💼", color: C.orange },
+              ].map((link, i) => (
+                <FadeUp key={link.label} delay={(i + 2) * 90}>
+                  <a href={link.href} target={link.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer"
+                    style={{ display: "flex", alignItems: "center", gap: "1rem", background: C.surface, border: `1px solid ${C.border}`, borderRadius: "10px", padding: "0.9rem 1.2rem", textDecoration: "none", transition: "all 0.2s" }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = link.color; e.currentTarget.style.transform = "translateX(5px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = "none"; }}>
+                    <span style={{ fontSize: "1.2rem" }}>{link.icon}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.6rem", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.2rem" }}>{link.label}</div>
+                      <div style={{ fontFamily: "'Nunito',sans-serif", fontSize: "0.88rem", color: link.color, fontWeight: 600 }}>{link.value}</div>
+                    </div>
+                    <span style={{ color: C.muted, fontSize: "0.78rem" }}>↗</span>
+                  </a>
+                </FadeUp>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer style={{ textAlign: "center", padding: "2.5rem", borderTop: `1px solid ${C.border}` }}>
+          <p style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: "0.7rem", color: C.muted, letterSpacing: "0.08em" }}>
+            Designed & Built by <span style={{ color: C.accent }}>Jeffrey Gitau Irungu</span> · {new Date().getFullYear()}
+          </p>
+        </footer>
+      </div>
+    </>
+  );
+}
